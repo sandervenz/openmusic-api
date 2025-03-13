@@ -15,7 +15,7 @@ OpenMusic API adalah sebuah layanan backend untuk mengelola data album dan lagu.
 ## 🚀 Cara Menjalankan Proyek
 ### 1. Clone Repository
 ```sh
-git clone https://github.com/username/openmusic-api.git
+git clone https://github.com/sander-0/openmusic-api.git
 cd openmusic-api
 ```
 
@@ -39,7 +39,7 @@ PORT=5000
 ### 4. Setup Database
 Jalankan perintah berikut untuk melakukan migrasi database:
 ```sh
-npm run migrate up
+npm run migrate:up
 ```
 
 ### 5. Jalankan Server
