@@ -1,5 +1,5 @@
-const SongsValidator = require('../validator/songs');
-const handleError = require('../utils/handleError');
+const SongsValidator = require('../../validator/songs');
+const handleError = require('../../utils/errorHandler');
 
 class SongsHandler {
   constructor(service) {
@@ -18,12 +18,10 @@ class SongsHandler {
       const { title, year, genre, performer, duration, albumId } = request.payload;
       const songId = await this._service.addSong({ title, year, genre, performer, duration, albumId });
 
-      const response = h.response({
+      return h.response({
         status: 'success',
         data: { songId },
-      });
-      response.code(201);
-      return response;
+      }).code(201);
     } catch (error) {
       return handleError(error, h);
     }

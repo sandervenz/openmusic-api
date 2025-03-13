@@ -1,5 +1,5 @@
-const AlbumsValidator = require('../validator/albums');
-const handleError = require('../exceptions/handleError');
+const AlbumsValidator = require('../../validator/albums');
+const handleError = require('../../utils/errorHandler');
 
 class AlbumsHandler {
   constructor(service) {
