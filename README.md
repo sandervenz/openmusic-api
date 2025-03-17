@@ -34,6 +34,9 @@ PGHOST=localhost
 PGPORT=5432
 HOST=localhost
 PORT=5000
+ACCESS_TOKEN_KEY=token_key
+ACCESS_TOKEN_AGE=1800  # (30 menit)
+REFRESH_TOKEN_KEY=token_key
 ```
 
 ### 4. Setup Database
@@ -49,7 +52,7 @@ npm run start
 Server akan berjalan di `http://localhost:5000`
 
 ## 📚 Endpoint API
-### 1️⃣ **Album**
+### 1⃣ **Album**
 #### ➕ Tambah Album
 **POST** `/albums`
 ```json
@@ -96,7 +99,7 @@ Response:
 
 ---
 
-### 2️⃣ **Song**
+### 2⃣ **Song**
 #### ➕ Tambah Lagu
 **POST** `/songs`
 ```json
@@ -139,11 +142,64 @@ Response:
 
 ---
 
+### 3⃣ **Authentication** (Fitur Baru ✨)
+#### 🔑 Login
+**POST** `/authentications`
+```json
+{
+  "username": "user123",
+  "password": "password123"
+}
+```
+Response:
+```json
+{
+  "status": "success",
+  "message": "Authentication berhasil",
+  "data": {
+    "accessToken": "jwt_token",
+    "refreshToken": "refresh_token"
+  }
+}
+```
+
+#### ⏳ Refresh Token
+**PUT** `/authentications`
+```json
+{
+  "refreshToken": "refresh_token"
+}
+```
+Response:
+```json
+{
+  "status": "success",
+  "message": "Access token diperbarui",
+  "data": {
+    "accessToken": "new_jwt_token"
+  }
+}
+```
+
+#### ❌ Logout
+**DELETE** `/authentications`
+```json
+{
+  "refreshToken": "refresh_token"
+}
+```
+Response:
+```json
+{
+  "status": "success",
+  "message": "Refresh token berhasil dihapus"
+}
+```
+
 ## 🔍 Testing API dengan Postman
 - Import **collection Postman** (bisa dibuat manual atau export dari Postman).
 - Gunakan **PostgreSQL** aktif untuk menyimpan data.
 - Pastikan **server berjalan** (`npm run start`).
 
-## 📜 Lisensi
+## 🐝 Lisensi
 Proyek ini dibuat untuk latihan dalam kursus **Belajar Fundamental Aplikasi Back-End - Dicoding**.
-
