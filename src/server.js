@@ -7,6 +7,8 @@ const AlbumsService = require('./services/postgresql/AlbumsService');
 const SongsService = require('./services/postgresql/SongsService');
 const UsersService = require('./services/postgresql/UsersService');
 const AuthenticationsService = require('./services/postgresql/AuthenticationsService');
+const PlaylistsService = require('./services/postgresql/PlaylistsService'); // Tambahkan PlaylistsService
+
 const TokenManager = require('./tokenize/TokenManager');
 
 // API Modules
@@ -14,6 +16,10 @@ const albums = require('./api/albums');
 const songs = require('./api/songs');
 const users = require('./api/users');
 const authentications = require('./api/authentications');
+const playlists = require('./api/playlists'); // Tambahkan Playlists API
+
+// Validators
+const PlaylistsValidator = require('./validator/playlists'); // Tambahkan Playlist Validator
 
 // Exceptions
 const ClientError = require('./exceptions/ClientError');
@@ -23,6 +29,7 @@ const init = async () => {
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const playlistsService = new PlaylistsService(); // Inisialisasi PlaylistsService
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -57,6 +64,7 @@ const init = async () => {
       plugin: authentications,
       options: { authenticationsService, usersService, tokenManager: TokenManager },
     },
+    { plugin: playlists, options: { service: playlistsService } },
   ]);
 
   // Error Handling
