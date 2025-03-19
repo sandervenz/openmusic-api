@@ -7,7 +7,10 @@ const AlbumsService = require('./services/postgresql/AlbumsService');
 const SongsService = require('./services/postgresql/SongsService');
 const UsersService = require('./services/postgresql/UsersService');
 const AuthenticationsService = require('./services/postgresql/AuthenticationsService');
-const PlaylistsService = require('./services/postgresql/PlaylistsService'); // Tambahkan PlaylistsService
+const PlaylistsService = require('./services/postgresql/PlaylistsService');
+const PlaylistSongsService = require('./services/postgresql/PlaylistSongsService');
+const ActivitiesService = require('./services/postgresql/ActivitiesService');
+const CollaborationsService = require('./services/postgresql/CollaborationsService'); // ✅ Tambahkan CollaborationsService
 
 const TokenManager = require('./tokenize/TokenManager');
 
@@ -16,10 +19,10 @@ const albums = require('./api/albums');
 const songs = require('./api/songs');
 const users = require('./api/users');
 const authentications = require('./api/authentications');
-const playlists = require('./api/playlists'); // Tambahkan Playlists API
-
-// Validators
-const PlaylistsValidator = require('./validator/playlists'); // Tambahkan Playlist Validator
+const playlists = require('./api/playlists');
+const playlistSongs = require('./api/playlistsongs');
+const activities = require('./api/activities');
+const collaborations = require('./api/collaborations'); 
 
 // Exceptions
 const ClientError = require('./exceptions/ClientError');
@@ -29,7 +32,10 @@ const init = async () => {
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
-  const playlistsService = new PlaylistsService(); // Inisialisasi PlaylistsService
+  const collaborationsService = new CollaborationsService(); // ✅ Inisialisasi CollaborationsService
+  const playlistsService = new PlaylistsService(collaborationsService); // ✅ Inject CollaborationsService
+  const activitiesService = new ActivitiesService(playlistsService);
+  const playlistSongsService = new PlaylistSongsService(playlistsService, activitiesService); // ✅ Inject PlaylistsService
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -65,6 +71,18 @@ const init = async () => {
       options: { authenticationsService, usersService, tokenManager: TokenManager },
     },
     { plugin: playlists, options: { service: playlistsService } },
+    {
+      plugin: playlistSongs,
+      options: { playlistSongsService, playlistsService, songsService },
+    },
+    {
+      plugin: activities,
+      options: { activitiesService, playlistsService },
+    },
+    {
+      plugin: collaborations,
+      options: { collaborationsService, playlistsService },
+    },
   ]);
 
   // Error Handling
