@@ -7,12 +7,23 @@ class AuthenticationsService {
   }
 
   async addRefreshToken(token) {
-    const query = {
-      text: 'INSERT INTO authentications VALUES($1)',
-      values: [token],
+    const queryCheck = {
+        text: 'SELECT token FROM authentications WHERE token = $1',
+        values: [token],
     };
-    await this._pool.query(query);
-  }
+    const checkResult = await this._pool.query(queryCheck);
+
+    if (checkResult.rowCount > 0) {
+        throw new InvariantError('Token sudah ada, duplikasi tidak diperbolehkan');
+    }
+
+    const queryInsert = {
+        text: 'INSERT INTO authentications (token) VALUES ($1)',
+        values: [token],
+    };
+    await this._pool.query(queryInsert);
+}
+
 
   async verifyRefreshToken(token) {
     const query = {
