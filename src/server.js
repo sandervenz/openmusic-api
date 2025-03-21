@@ -10,7 +10,11 @@ const AuthenticationsService = require('./services/postgresql/AuthenticationsSer
 const PlaylistsService = require('./services/postgresql/PlaylistsService');
 const PlaylistSongsService = require('./services/postgresql/PlaylistSongsService');
 const ActivitiesService = require('./services/postgresql/ActivitiesService');
-const CollaborationsService = require('./services/postgresql/CollaborationsService'); // ✅ Tambahkan CollaborationsService
+const CollaborationsService = require('./services/postgresql/CollaborationsService');
+const AlbumLikesService = require('./services/postgresql/AlbumLikesService');
+// const ExportService = require('./services/rabbitmq/ProducerService');
+// const StorageService = require('./services/s3/StorageService');
+const CacheService = require('./services/redis/CacheService');
 
 const TokenManager = require('./tokenize/TokenManager');
 
@@ -22,20 +26,26 @@ const authentications = require('./api/authentications');
 const playlists = require('./api/playlists');
 const playlistSongs = require('./api/playlistsongs');
 const activities = require('./api/activities');
-const collaborations = require('./api/collaborations'); 
+const collaborations = require('./api/collaborations');
+const albumLikes = require('./api/albumlikes');
+// const exportsHandler = require('./api/exports');
 
 // Exceptions
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
+  const cacheService = new CacheService();
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
-  const collaborationsService = new CollaborationsService(); // ✅ Inisialisasi CollaborationsService
-  const playlistsService = new PlaylistsService(collaborationsService); // ✅ Inject CollaborationsService
+  const collaborationsService = new CollaborationsService();
+  const playlistsService = new PlaylistsService(collaborationsService);
   const activitiesService = new ActivitiesService(playlistsService);
-  const playlistSongsService = new PlaylistSongsService(playlistsService, activitiesService); // ✅ Inject PlaylistsService
+  const playlistSongsService = new PlaylistSongsService(playlistsService, activitiesService);
+  const albumLikesService = new AlbumLikesService(cacheService);
+  // const exportService = new ExportService();
+  // const storageService = new StorageService();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -63,7 +73,7 @@ const init = async () => {
 
   // Register API Modules
   await server.register([
-    { plugin: albums, options: { service: albumsService } },
+    { plugin: albums, options: { service: albumsService,  } }, // ✅ Upload gambar album  storageService
     { plugin: songs, options: { service: songsService } },
     { plugin: users, options: { service: usersService } },
     {
@@ -83,6 +93,14 @@ const init = async () => {
       plugin: collaborations,
       options: { collaborationsService, playlistsService },
     },
+    {
+      plugin: albumLikes,
+      options: { albumLikesService, albumsService },
+    },
+    // {
+    //   plugin: exportsHandler,
+    //   options: { service: exportService, playlistsService },
+    // },
   ]);
 
   // Error Handling

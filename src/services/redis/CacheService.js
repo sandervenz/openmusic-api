@@ -1,33 +1,65 @@
 const redis = require('redis');
-const { promisify } = require('util');
 const config = require('../../utils/config');
 
 class CacheService {
   constructor() {
     this._client = redis.createClient({
-      host: config.redis.host,
+      socket: {
+        host: config.redis.host,
+      },
     });
 
     this._client.on('error', (err) => {
-      console.error('Redis Error:', err);
+      console.error('Redis Client Error:', err);
     });
 
-    // Promisify agar bisa menggunakan async/await
-    this.getAsync = promisify(this._client.get).bind(this._client);
-    this.setAsync = promisify(this._client.set).bind(this._client);
-    this.delAsync = promisify(this._client.del).bind(this._client);
+    this._connect();
+  }
+
+  async _connect() {
+    if (!this._client.isOpen) {
+      try {
+        await this._client.connect();
+        console.log('Redis connected successfully');
+      } catch (err) {
+        console.error('Failed to connect to Redis:', err);
+      }
+    }
   }
 
   async set(key, value, expirationInSeconds = 1800) {
-    await this.setAsync(key, value, 'EX', expirationInSeconds);
+    await this._connect();
+    try {
+      await this._client.setEx(key, expirationInSeconds, value);
+    } catch (err) {
+      console.error(`Failed to set cache for key: ${key}`, err);
+    }
   }
 
   async get(key) {
-    return await this.getAsync(key);
+    await this._connect();
+    try {
+      return await this._client.get(key);
+    } catch (err) {
+      console.error(`Failed to get cache for key: ${key}`, err);
+      return null;
+    }
   }
 
   async delete(key) {
-    await this.delAsync(key);
+    await this._connect();
+    try {
+      await this._client.del(key);
+    } catch (err) {
+      console.error(`Failed to delete cache for key: ${key}`, err);
+    }
+  }
+
+  async close() {
+    if (this._client.isOpen) {
+      await this._client.quit();
+      console.log('Redis connection closed.');
+    }
   }
 }
 
