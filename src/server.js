@@ -12,7 +12,7 @@ const PlaylistSongsService = require('./services/postgresql/PlaylistSongsService
 const ActivitiesService = require('./services/postgresql/ActivitiesService');
 const CollaborationsService = require('./services/postgresql/CollaborationsService');
 const AlbumLikesService = require('./services/postgresql/AlbumLikesService');
-// const ExportService = require('./services/rabbitmq/ProducerService');
+const ProducerService = require('./services/rabbitmq/ProducerService');
 // const StorageService = require('./services/s3/StorageService');
 const CacheService = require('./services/redis/CacheService');
 
@@ -28,7 +28,7 @@ const playlistSongs = require('./api/playlistsongs');
 const activities = require('./api/activities');
 const collaborations = require('./api/collaborations');
 const albumLikes = require('./api/albumlikes');
-// const exportsHandler = require('./api/exports');
+const exportsHandler = require('./api/exports');
 
 // Exceptions
 const ClientError = require('./exceptions/ClientError');
@@ -44,7 +44,7 @@ const init = async () => {
   const activitiesService = new ActivitiesService(playlistsService);
   const playlistSongsService = new PlaylistSongsService(playlistsService, activitiesService);
   const albumLikesService = new AlbumLikesService(cacheService);
-  // const exportService = new ExportService();
+  const producerService = new ProducerService();
   // const storageService = new StorageService();
 
   const server = Hapi.server({
@@ -97,10 +97,10 @@ const init = async () => {
       plugin: albumLikes,
       options: { albumLikesService, albumsService },
     },
-    // {
-    //   plugin: exportsHandler,
-    //   options: { service: exportService, playlistsService },
-    // },
+    {
+      plugin: exportsHandler,
+      options: { producerService, playlistsService },
+    },
   ]);
 
   // Error Handling

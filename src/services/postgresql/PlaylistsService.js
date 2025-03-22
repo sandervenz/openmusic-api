@@ -48,9 +48,7 @@ class PlaylistService {
     return result.rows;
   }
 
-  async getPlaylistById(playlistId, userId) {
-    await this.verifyPlaylistAccess(playlistId, userId);
-
+  async getPlaylistById(playlistId) {
     const playlistQuery = {
       text: `
         SELECT playlists.id, playlists.name, users.username 
