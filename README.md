@@ -1,205 +1,105 @@
 # OpenMusic API
 
-## 📌 Deskripsi
-OpenMusic API adalah sebuah layanan backend untuk mengelola data album dan lagu. API ini dibuat menggunakan **Hapi.js** dan menyimpan data ke dalam **PostgreSQL**.
+OpenMusic API adalah layanan backend yang digunakan untuk mengelola data musik, seperti lagu, album, dan playlist. API ini juga mendukung fitur ekspor playlist, upload cover album, serta caching untuk meningkatkan performa.
 
-## 🛠️ Teknologi yang Digunakan
-- **Node.js**
-- **Hapi.js**
-- **PostgreSQL**
-- **node-pg-migrate**
-- **dotenv**
-- **ESLint** untuk code style
-- **Jest** untuk unit testing
+## 📌 Fitur
 
-## 🚀 Cara Menjalankan Proyek
-### 1. Clone Repository
+### **✅ OpenMusic API v1**
+- **CRUD Lagu**: Tambah, baca, ubah, dan hapus lagu.
+- **CRUD Album**: Tambah, baca, ubah, dan hapus album.
+- **CRUD Playlist**: Buat, baca, dan hapus playlist.
+- **Autentikasi & Autorisasi**: Menggunakan JWT untuk autentikasi.
+
+### **🚀 OpenMusic API v2**
+- **Kolaborasi Playlist**: Membolehkan pengguna berbagi playlist.
+- **Server-side caching**: Menggunakan Redis untuk mempercepat respons data yang sering diakses.
+
+### **⚡ OpenMusic API v3**
+- **Ekspor Playlist**: Menggunakan RabbitMQ untuk mengirim playlist ke email.
+- **Upload Cover Album**: Menggunakan AWS S3 untuk menyimpan gambar cover album.
+- **Like & Unlike Album**: Pengguna dapat menyukai album favorit mereka.
+- **Peningkatan Performa**: Optimasi caching dan query database.
+
+## 💡 Teknologi yang Digunakan
+- **Node.js** dengan framework **Hapi.js** sebagai backend utama.
+- **PostgreSQL** sebagai database.
+- **Redis** untuk caching data.
+- **RabbitMQ** untuk message queue pada fitur ekspor playlist.
+- **AWS S3** untuk menyimpan cover album.
+- **Joi** untuk validasi request payload.
+- **JWT (JSON Web Token)** untuk autentikasi pengguna.
+- **Nodemailer** untuk mengirim email hasil ekspor playlist.
+
+## 🔧 Cara Menjalankan
+
+### **1️⃣ Clone Repository**
 ```sh
-git clone https://github.com/sander-0/openmusic-api.git
+git clone https://github.com/user/openmusic-api.git
 cd openmusic-api
 ```
 
-### 2. Install Dependencies
+### **2️⃣ Konfigurasi Environment (.env)**
+Buat file `.env` di root proyek dan isi dengan konfigurasi berikut:
+```sh
+# Database
+PGUSER=your_db_user
+PGPASSWORD=your_db_password
+PGDATABASE=your_db_name
+PGHOST=your_db_host
+PGPORT=5432
+
+# JWT
+ACCESS_TOKEN_KEY=your_access_token_secret
+REFRESH_TOKEN_KEY=your_refresh_token_secret
+
+# RabbitMQ
+RABBITMQ_SERVER=amqp://localhost
+
+# Redis
+REDIS_SERVER=localhost
+
+# AWS S3
+AWS_BUCKET_NAME=your_s3_bucket
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_REGION=your_s3_region
+
+# SMTP (Email Service)
+SMTP_HOST=smtp.your-email.com
+SMTP_PORT=587
+SMTP_USER=your_email@example.com
+SMTP_PASSWORD=your_email_password
+```
+
+### **3️⃣ Install Dependencies**
 ```sh
 npm install
 ```
 
-### 3. Buat File `.env`
-Buat file `.env` di root folder dengan isi:
+### **4️⃣ Jalankan Server**
 ```sh
-PGUSER=your_db_user
-PGPASSWORD=your_db_password
-PGDATABASE=your_db_name
-PGHOST=localhost
-PGPORT=5432
-HOST=localhost
-PORT=5000
-ACCESS_TOKEN_KEY=token_key
-ACCESS_TOKEN_AGE=1800  # (30 menit)
-REFRESH_TOKEN_KEY=token_key
+npm start
 ```
 
-### 4. Setup Database
-Jalankan perintah berikut untuk melakukan migrasi database:
+## 🏗️ Struktur Proyek
 ```sh
-npm run migrate:up
+openmusic-api/
+├── producer/   # Aplikasi utama (backend API)
+├── consumer/   # Worker untuk RabbitMQ
+├── migrations/ # Skrip database
+├── src/
+│   ├── api/
+│   ├── services/
+│   ├── db/
+│   ├── utils/
+├── .env
+├── package.json
+└── README.md
 ```
 
-### 5. Jalankan Server
-```sh
-npm run start
-```
-Server akan berjalan di `http://localhost:5000`
-
-## 📚 Endpoint API
-### 1⃣ **Album**
-#### ➕ Tambah Album
-**POST** `/albums`
-```json
-{
-  "name": "Viva la Vida",
-  "year": 2008
-}
-```
-Response:
-```json
-{
-  "status": "success",
-  "data": {
-    "albumId": "album-123"
-  }
-}
-```
-
-#### 🔍 Get Detail Album (termasuk daftar lagu)
-**GET** `/albums/{albumId}`
-Response:
-```json
-{
-  "status": "success",
-  "data": {
-    "album": {
-      "id": "album-123",
-      "name": "Viva la Vida",
-      "year": 2008,
-      "songs": [
-        {
-          "id": "song-456",
-          "title": "Life in Technicolor",
-          "performer": "Coldplay"
-        }
-      ]
-    }
-  }
-}
-```
-
-#### ❌ Hapus Album
-**DELETE** `/albums/{albumId}`
+## 📫 Kontribusi
+Jika ingin berkontribusi, silakan buat **Pull Request** atau laporkan masalah pada **Issues**.
 
 ---
+🚀 OpenMusic API dikembangkan untuk memenuhi kebutuhan pengelolaan data musik dengan fitur lengkap dan performa yang optimal. Selamat mencoba! 🎵
 
-### 2⃣ **Song**
-#### ➕ Tambah Lagu
-**POST** `/songs`
-```json
-{
-  "title": "Life in Technicolor",
-  "year": 2008,
-  "genre": "Indie",
-  "performer": "Coldplay",
-  "duration": 120,
-  "albumId": "album-123"
-}
-```
-
-#### 🔍 Get Semua Lagu (Mendukung Query Parameter `?title` & `?performer`)
-**GET** `/songs`
-Response:
-```json
-{
-  "status": "success",
-  "data": {
-    "songs": [
-      {
-        "id": "song-456",
-        "title": "Life in Technicolor",
-        "performer": "Coldplay"
-      }
-    ]
-  }
-}
-```
-
-#### 🔍 Get Detail Lagu
-**GET** `/songs/{songId}`
-
-#### ✏️ Edit Lagu
-**PUT** `/songs/{songId}`
-
-#### ❌ Hapus Lagu
-**DELETE** `/songs/{songId}`
-
----
-
-### 3⃣ **Authentication** (Fitur Baru ✨)
-#### 🔑 Login
-**POST** `/authentications`
-```json
-{
-  "username": "user123",
-  "password": "password123"
-}
-```
-Response:
-```json
-{
-  "status": "success",
-  "message": "Authentication berhasil",
-  "data": {
-    "accessToken": "jwt_token",
-    "refreshToken": "refresh_token"
-  }
-}
-```
-
-#### ⏳ Refresh Token
-**PUT** `/authentications`
-```json
-{
-  "refreshToken": "refresh_token"
-}
-```
-Response:
-```json
-{
-  "status": "success",
-  "message": "Access token diperbarui",
-  "data": {
-    "accessToken": "new_jwt_token"
-  }
-}
-```
-
-#### ❌ Logout
-**DELETE** `/authentications`
-```json
-{
-  "refreshToken": "refresh_token"
-}
-```
-Response:
-```json
-{
-  "status": "success",
-  "message": "Refresh token berhasil dihapus"
-}
-```
-
-## 🔍 Testing API dengan Postman
-- Import **collection Postman** (bisa dibuat manual atau export dari Postman).
-- Gunakan **PostgreSQL** aktif untuk menyimpan data.
-- Pastikan **server berjalan** (`npm run start`).
-
-## 🐝 Lisensi
-Proyek ini dibuat untuk latihan dalam kursus **Belajar Fundamental Aplikasi Back-End - Dicoding**.
