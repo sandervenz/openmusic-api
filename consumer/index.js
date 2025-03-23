@@ -11,5 +11,5 @@ const Listener = require('./Listener');
   const { connection, channel } = await connectRabbitMQ();
   console.log('🐰 RabbitMQ Consumer berjalan...');
 
-  channel.consume('export:playlists', listener.listen, { noAck: true });
+  channel.consume('export:playlist', listener.listen, { noAck: true });
 })();
