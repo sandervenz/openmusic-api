@@ -1,0 +1,14 @@
+{
+  "name": "consumer",
+  "version": "1.0.0",
+  "main": "src/consumer.js",
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.3.1",
+    "nodemailer": "^6.9.3",
+    "pg": "^8.11.3"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

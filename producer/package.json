@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"node src/server.js\" \"node src/consumer.js\"",
-    "dev": "concurrently \"nodemon src/server.js\" \"nodemon src/consumer.js\"",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "migrate": "node-pg-migrate",
     "lint": "eslint . --fix"
   },
@@ -32,7 +32,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
-    "concurrently": "^9.1.2",
     "eslint": "^9.22.0",
     "globals": "^16.0.0"
   }
