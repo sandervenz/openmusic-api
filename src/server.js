@@ -13,7 +13,7 @@ const ActivitiesService = require('./services/postgresql/ActivitiesService');
 const CollaborationsService = require('./services/postgresql/CollaborationsService');
 const AlbumLikesService = require('./services/postgresql/AlbumLikesService');
 const ProducerService = require('./services/rabbitmq/ProducerService');
-// const StorageService = require('./services/s3/StorageService');
+const StorageService = require('./services/s3/StorageService');
 const CacheService = require('./services/redis/CacheService');
 
 const TokenManager = require('./tokenize/TokenManager');
@@ -35,7 +35,8 @@ const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
   const cacheService = new CacheService();
-  const albumsService = new AlbumsService();
+  const storageService = new StorageService();
+  const albumsService = new AlbumsService(storageService);
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
@@ -45,12 +46,17 @@ const init = async () => {
   const playlistSongsService = new PlaylistSongsService(playlistsService, activitiesService);
   const albumLikesService = new AlbumLikesService(cacheService);
   const producerService = new ProducerService();
-  // const storageService = new StorageService();
 
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
-    routes: { cors: { origin: ['*'] } },
+    routes: {
+      cors: {
+        origin: ['*'], 
+        headers: ['Accept', 'Content-Type', 'Authorization'],
+        exposedHeaders: ['Accept', 'Content-Type', 'Authorization'],
+      },
+    },
   });
 
   // Register Plugin JWT Authentication
@@ -73,7 +79,7 @@ const init = async () => {
 
   // Register API Modules
   await server.register([
-    { plugin: albums, options: { service: albumsService,  } }, // ✅ Upload gambar album  storageService
+    { plugin: albums, options: { albumsService, storageService } }, 
     { plugin: songs, options: { service: songsService } },
     { plugin: users, options: { service: usersService } },
     {

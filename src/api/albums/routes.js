@@ -19,6 +19,20 @@ const routes = (handler) => [
       path: '/albums/{id}',
       handler: handler.deleteAlbumByIdHandler,
     },
+    {
+      method: 'POST',
+      path: '/albums/{id}/covers',
+      handler: handler.uploadCoverHandler,
+      options: {
+        payload: {
+          allow: 'multipart/form-data',
+          multipart: true,
+          output: 'stream',
+          parse: true,
+          maxBytes: 512000, // Batasan 500KB
+        },
+      }
+    },
   ];
   
   module.exports = routes;

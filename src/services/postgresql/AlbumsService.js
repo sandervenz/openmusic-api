@@ -4,7 +4,7 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 const pool = require('./DatabaseConfig');
 
 class AlbumsService {
-  async addAlbum({ name, year }) {
+  async addAlbum(name, year) {
     const id = `album-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO albums (id, name, year) VALUES ($1, $2, $3) RETURNING id',
@@ -20,7 +20,7 @@ class AlbumsService {
 
   async getAlbumById(id) {
     const albumQuery = {
-      text: 'SELECT id, name, year FROM albums WHERE id = $1',
+      text: 'SELECT id, name, year, cover FROM albums WHERE id = $1',
       values: [id],
     };
 
@@ -37,6 +37,7 @@ class AlbumsService {
 
     return {
       ...albumResult.rows[0],
+      coverUrl: albumResult.rows[0].cover || null,
       songs: songResult.rows,
     };
   }
@@ -76,6 +77,19 @@ class AlbumsService {
       throw new NotFoundError('Album tidak ditemukan');
     }
   }  
+
+  async updateAlbumCover(albumId, coverUrl) {
+    const query = {
+      text: 'UPDATE albums SET cover = $1 WHERE id = $2 RETURNING id',
+      values: [coverUrl, albumId],
+    };
+
+    const result = await pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Album tidak ditemukan');
+    }
+  }
 }
 
 module.exports = AlbumsService;
