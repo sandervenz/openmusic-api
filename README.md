@@ -1,36 +1,36 @@
 # OpenMusic API
 
-OpenMusic API adalah layanan backend yang digunakan untuk mengelola data musik, seperti lagu, album, dan playlist. API ini juga mendukung fitur ekspor playlist, upload cover album, serta caching untuk meningkatkan performa.
+OpenMusic API is a backend service used to manage music data, such as songs, albums, and playlists. This API also supports playlist export features, album cover uploads, and caching to improve performance.
 
-## 📌 Fitur
+## 📌 Features
 
 ### **✅ OpenMusic API v1**
-- **CRUD Lagu**: Tambah, baca, ubah, dan hapus lagu.
-- **CRUD Album**: Tambah, baca, ubah, dan hapus album.
-- **CRUD Playlist**: Buat, baca, dan hapus playlist.
-- **Autentikasi & Autorisasi**: Menggunakan JWT untuk autentikasi.
+- **CRUD Songs**: Add, read, update, and delete songs.
+- **CRUD Albums**: Add, read, update, and delete albums.
+- **CRUD Playlists**: Create, read, and delete playlists.
+- **Authentication & Authorization**: Using JWT for authentication.
 
 ### **🚀 OpenMusic API v2**
-- **Kolaborasi Playlist**: Membolehkan pengguna berbagi playlist.
-- **Server-side caching**: Menggunakan Redis untuk mempercepat respons data yang sering diakses.
+- **Playlist Collaboration**: Allows users to share playlists.
+- **Server-side caching**: Using Redis to speed up responses for frequently accessed data.
 
 ### **⚡ OpenMusic API v3**
-- **Ekspor Playlist**: Menggunakan RabbitMQ untuk mengirim playlist ke email.
-- **Upload Cover Album**: Menggunakan AWS S3 untuk menyimpan gambar cover album.
-- **Like & Unlike Album**: Pengguna dapat menyukai album favorit mereka.
-- **Peningkatan Performa**: Optimasi caching dan query database.
+- **Playlist Export**: Using RabbitMQ to send playlists to email.
+- **Album Cover Upload**: Using AWS S3 to store album cover images.
+- **Like & Unlike Album**: Users can like their favorite albums.
+- **Performance Improvements**: Optimization of caching and database queries.
 
-## 💡 Teknologi yang Digunakan
-- **Node.js** dengan framework **Hapi.js** sebagai backend utama.
-- **PostgreSQL** sebagai database.
-- **Redis** untuk caching data.
-- **RabbitMQ** untuk message queue pada fitur ekspor playlist.
-- **AWS S3** untuk menyimpan cover album.
-- **Joi** untuk validasi request payload.
-- **JWT (JSON Web Token)** untuk autentikasi pengguna.
-- **Nodemailer** untuk mengirim email hasil ekspor playlist.
+## 💡 Technologies Used
+- **Node.js** with **Hapi.js** framework as the main backend.
+- **PostgreSQL** as the database.
+- **Redis** for data caching.
+- **RabbitMQ** for message queue in playlist export feature.
+- **AWS S3** for storing album covers.
+- **Joi** for request payload validation.
+- **JWT (JSON Web Token)** for user authentication.
+- **Nodemailer** for sending playlist export result emails.
 
-## 🔧 Cara Menjalankan
+## 🔧 How to Run
 
 ### **1️⃣ Clone Repository**
 ```sh
@@ -38,8 +38,8 @@ git clone https://github.com/user/openmusic-api.git
 cd openmusic-api
 ```
 
-### **2️⃣ Konfigurasi Environment (.env)**
-Buat file `.env` di root proyek dan isi dengan konfigurasi berikut:
+### **2️⃣ Environment Configuration (.env)**
+Create a `.env` file in the project root and fill it with the following configuration:
 ```sh
 # Database
 PGUSER=your_db_user
@@ -76,17 +76,17 @@ SMTP_PASSWORD=your_email_password
 npm install
 ```
 
-### **4️⃣ Jalankan Server**
+### **4️⃣ Run Server**
 ```sh
 npm start
 ```
 
-## 🏗️ Struktur Proyek
+## 🏗️ Project Structure
 ```sh
 openmusic-api/
-├── producer/   # Aplikasi utama (backend API)
-├── consumer/   # Worker untuk RabbitMQ
-├── migrations/ # Skrip database
+├── producer/   # Main application (backend API)
+├── consumer/   # Worker for RabbitMQ
+├── migrations/ # Database scripts
 ├── src/
 │   ├── api/
 │   ├── services/
@@ -97,9 +97,9 @@ openmusic-api/
 └── README.md
 ```
 
-## 📫 Kontribusi
-Jika ingin berkontribusi, silakan buat **Pull Request** atau laporkan masalah pada **Issues**.
+## 📫 Contribution
+If you want to contribute, please create a **Pull Request** or report issues on **Issues**.
 
 ---
-🚀 OpenMusic API dikembangkan untuk memenuhi kebutuhan pengelolaan data musik dengan fitur lengkap dan performa yang optimal. Selamat mencoba! 🎵
+🚀 OpenMusic API was developed to meet the needs of music data management with comprehensive features and optimal performance. Happy trying! 🎵
 
